@@ -8,6 +8,7 @@
 mod config;
 mod exec;
 mod menu;
+mod terminal;
 
 fn main() {
     println!("Hello, world!");
@@ -17,6 +18,12 @@ fn main() {
     let test = config.expand_dir("test_2", None).unwrap();
 
     println!(">>>> test dir: {}", test.to_str().unwrap());
+
+    println!(">>>> new konsole id: {}", terminal::new_window())
+
+
+    // terminal::main().unwrap();
+
 
     // print!("{}", config.dirs.get("work").unwrap())
 

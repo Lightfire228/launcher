@@ -1,5 +1,5 @@
 use serde::{Serialize, Deserialize};
-use std::{collections::HashMap, fs, path::{Path, PathBuf}};
+use std::{collections::{HashMap, HashSet}, fs, path::{Path, PathBuf}};
 use regex::Regex;
 // use std::fs;
 
@@ -50,28 +50,34 @@ impl Config {
         let     re   = Regex::new(r"\{(\w+)\}").unwrap();
         let mut path = self.get_dir_expect(name, proj);
 
-        let mut tmp  = String::new();
-
         let mut i    = 0;
+
+        let mut map = HashSet::new();
 
 
         let result = loop {
-            assert!(i < 1000, "Too many variable expansion loops\n(did you accidentally create an expansion loop?)");
+            assert!(i < 1000, "Too many variable expansion loops");
             i += 1;
 
-            tmp.clear();
-            tmp.push_str(&path);
-
-            let Some(var) = re.captures(&tmp) else {
+            let Some(var) = re.captures(&path) else {
                 break path;
             };
 
-            let var_name = var.get(1).unwrap().as_str();
-            let var_str  = var.get_match().as_str();
 
-            let dir = self.get_dir_expect(var_name, proj);
+            let var_str  = var.get(0).unwrap().as_str();
+            let var_name = var.get(1).unwrap().as_str().to_owned();
 
-            path = path.replace(&var_str, &dir);
+            if map.contains(&var_name) {
+                panic!("Variable expansion cycle detected: {var_str}");
+            }
+
+
+            let dir = self.get_dir_expect(&var_name, proj);
+
+            path = path.replace(var_str, &dir);
+
+            map.insert(var_name.to_owned());
+
         };
 
         let result = Path::new(&result).to_owned();
@@ -80,17 +86,11 @@ impl Config {
     }
 
     fn get_dir(&self, name: &str, proj: Option<&Project>) -> Option<String> {
-
-        if let Some(path) = self.dirs.get(name) {
-            return Some(path.to_owned());
-        }
-
-        let Some(proj) = proj else { return None; };
-
-        match proj.dirs.get(name) {
-            Some(path) => Some(path.to_owned()),
-            None       => None
-        }
+        self.dirs.get(name)
+            .cloned()
+            .or_else(||
+                proj.and_then(|p| p.dirs.get(name).cloned())
+            )
     }
 
     fn get_dir_expect(&self, name: &str, proj: Option<&Project>) -> String {

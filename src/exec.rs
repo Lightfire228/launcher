@@ -44,21 +44,20 @@ pub fn open_obsidian(name: &str) {
     _launch_file_uri(&uri);
 }
 
-// todo: dbus
-// pub fn open_terminal(path: &str) {
-//     Command::new("konsole")
-//         .arg(path)
-//         .output()
-//         .expect(&format!("failed to open {}", command))
-//     ;
-// }
+pub fn open_terminal(path: &str) {
+    Command::new("systemd-run")
+        .args(["--user", "konsole", "--workdir", path])
+        .output()
+        .expect("failed to open konsole")
+    ;
+}
 
 
 fn _open_editor(command: &str, path: &str) {
     Command::new(command)
         .arg(path)
         .output()
-        .expect(&format!("failed to open {}", command))
+        .unwrap_or_else(|_| panic!("failed to open {}", command))
     ;
 }
 
@@ -72,14 +71,19 @@ fn _launch_file_uri(uri: &str) {
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_vscode() {
-        open_vscode("test");
-    }
+    // #[test]
+    // fn test_vscode() {
+    //     open_vscode("test");
+    // }
+
+    // #[test]
+    // fn test_obsidian() {
+    //     open_obsidian("Game - Silksong");
+    // }
 
     #[test]
-    fn test_obsidian() {
-        open_obsidian("Game - Silksong");
+    fn test_konsole() {
+        open_terminal("/tmp");
     }
 
 }
