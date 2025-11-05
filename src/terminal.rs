@@ -1,9 +1,15 @@
 use dbus::blocking::Connection;
-use std::{collections::HashSet, thread::sleep, time::Duration};
-
+use std::{collections::HashSet, ops::Deref, thread::sleep, time::Duration};
 use crate::exec;
 
-pub fn main() -> Result<(), Box<dyn std::error::Error>> {
+#[derive(Debug)]
+pub struct TerminalInstance {
+    pub dbus_session: String,
+    pub pid:          u32,
+}
+
+
+pub fn list_names() -> Result<(), Box<dyn std::error::Error>> {
 
     let conn  = Connection::new_session()?;
     let proxy = conn.with_proxy("org.freedesktop.DBus", "/", Duration::from_millis(5000));
@@ -16,7 +22,7 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 
-pub fn new_window() -> String {
+pub fn new_window() -> TerminalInstance {
 
 
     let conn  = Connection::new_session().unwrap();
@@ -40,7 +46,14 @@ pub fn new_window() -> String {
 
     assert!(unique.len() <= 1, "Multiple new DBus ids were found for spawned console session");
 
+    let dbus_session = unique.first().expect("Could not find DBus id for spawned konsole session").to_owned();
 
-    unique.first().expect("Could not find DBus id for spawned konsole session").to_owned()
+    let (pid,): (u32,) = proxy.method_call("org.freedesktop.DBus", "GetConnectionUnixProcessID", (&dbus_session,)).unwrap();
+
+    TerminalInstance {
+        dbus_session,
+        pid,
+    }
+
 
 }

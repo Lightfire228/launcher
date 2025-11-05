@@ -19,10 +19,16 @@ fn main() {
 
     println!(">>>> test dir: {}", test.to_str().unwrap());
 
-    println!(">>>> new konsole id: {}", terminal::new_window())
+    let new_terminal = terminal::new_window();
+
+    dbg!("{}", &new_terminal);
+
+    // println!(">>>> new konsole id: {}", *terminal::new_window())
+    // println!(">>>> new konsole id: {}", *terminal::new_window())
 
 
-    // terminal::main().unwrap();
+
+    // terminal::list_names().unwrap();
 
 
     // print!("{}", config.dirs.get("work").unwrap())
