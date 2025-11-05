@@ -1,33 +1,18 @@
-use std::process::{Command, Output};
+use std::process::Command;
 use urlencoding;
 
-use crate::config::Project;
+use crate::{config::{Config, Project}, terminal};
 
-pub fn exec() {
+pub fn launch_project(config: &Config, proj: &Project) {
 
-    let output = Command::new("sh")
-        .arg("-c")
-        .arg("echo hello")
-        .output()
-        .expect("failed to execute process")
-    ;
+    // TODO:
+    proj.vscode  .iter().map(|x| config.expand_dir(x, Some(proj)).unwrap()).for_each(|x| open_vscode(x.to_str().unwrap()));
+    proj.zed     .iter().map(|x| config.expand_dir(x, Some(proj)).unwrap()).for_each(|x| open_zed   (x.to_str().unwrap()));
 
-    let hello = str::from_utf8(&output.stdout).expect("Unable to parse output");
-
-    println!(">>> {}", hello);
-
-    open_vscode("test 2");
-
-}
-
-pub fn launch_project(proj: &Project) {
-
-    proj.vscode  .iter().for_each(|x| open_vscode  (x));
-    proj.zed     .iter().for_each(|x| open_zed     (x));
+    proj.terminal.iter().map(|x| config.expand_dir(x, Some(proj)).unwrap()).for_each(|x| { terminal::new_window(x.to_str().unwrap()); });
 
     open_obsidian(&proj.obsidian);
 
-    // TODO: terminal
 }
 
 pub fn open_vscode(path: &str) {

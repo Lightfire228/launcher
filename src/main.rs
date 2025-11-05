@@ -15,25 +15,27 @@ fn main() {
 
     let config = config::get_config();
 
-    let test = config.expand_dir("test_2", None).unwrap();
+    let test = config.expand_dir("timekeeper", None).unwrap();
 
     println!(">>>> test dir: {}", test.to_str().unwrap());
 
-    let new_terminal = terminal::new_window();
+    // let new_terminal = terminal::new_window("");
 
-    dbg!("{}", &new_terminal);
+    // dbg!("{}", &new_terminal);
 
     // println!(">>>> new konsole id: {}", *terminal::new_window())
     // println!(">>>> new konsole id: {}", *terminal::new_window())
 
 
 
-    // terminal::list_names().unwrap();
+    // for name in terminal::list_session_names() {
+    //     println!("{name}")
+    // }
 
 
     // print!("{}", config.dirs.get("work").unwrap())
 
-    // exec::launch_project(&config.projects[0]);
+    exec::launch_project(&config, &config.projects[0]);
 
 
 }

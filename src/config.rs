@@ -48,7 +48,7 @@ impl Config {
     pub fn expand_dir(&self, name: &str, proj: Option<&Project>) -> Option<PathBuf> {
 
         let     re   = Regex::new(r"\{(\w+)\}").unwrap();
-        let mut path = self.get_dir_expect(name, proj);
+        let mut path = name.to_owned();
 
         let mut i    = 0;
 
