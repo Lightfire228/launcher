@@ -6,11 +6,8 @@ use crate::{config::{Config, Project}, terminal};
 pub fn launch_project(config: &Config, proj: &Project) {
 
 
-    let launch = |iter: &[String], func: Box<dyn Fn(String) -> ()>| { iter
+    let launch = |iter: &[String], func: Box<dyn Fn(&str) -> ()>| { iter
         .iter()
-        .map(|x|
-            config.expand_dir(x, Some(proj)).unwrap()
-        )
         .for_each(|x| func(x));
     };
 

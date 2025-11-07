@@ -9,21 +9,38 @@ pub fn get_config() -> Config {
 
     let config_str = fs::read_to_string("./config.yaml").expect("Unable to read config file");
 
-    let config: Config = serde_yml::from_str(&config_str).expect("Unable to parse config file");
+    let config: ConfigYaml = serde_yml::from_str(&config_str).expect("Unable to parse config file");
 
-    config
+    config.into()
+}
+
+#[derive(Debug)]
+pub struct Config {
+    pub projects: Vec<Project>
+}
+
+#[derive(Debug)]
+pub struct Project {
+    pub name: String,
+    pub code: String,
+
+    pub vscode:   Vec<String>,
+    pub zed:      Vec<String>,
+    pub obsidian: String,
+    pub terminal: Vec<String>,
 }
 
 
 
+
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Config {
-    #[serde(default)] pub projects: Vec<Project>,
+struct ConfigYaml {
+    #[serde(default)] pub projects: Vec<ProjectYaml>,
     #[serde(default)] pub dirs:     Dirs,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Project {
+struct ProjectYaml {
     pub name: String,
     pub code: String,
 
@@ -31,7 +48,7 @@ pub struct Project {
     #[serde(default)] pub zed:      Vec<String>,
     #[serde(default)] pub obsidian: String,
     #[serde(default)] pub terminal: Vec<String>,
-    // #[serde(default)] pub terminal: Terminal,
+    // #[serde(default)] pub terminal: TerminalYaml,
 
     #[serde(default)] pub dirs:     Dirs,
 }
@@ -39,18 +56,53 @@ pub struct Project {
 
 
 // #[derive(Serialize, Deserialize, Default)]
-// pub struct Terminal {
+// pub struct TerminalYaml {
 //     #[serde(default)] pub tabs: Vec<String>,
 // }
 
 
-impl Config {
+
+impl From<ConfigYaml> for Config {
+
+    fn from(value: ConfigYaml) -> Self {
+        Self {
+            projects: value.projects.iter().map(|p| Project::from_yaml(&p, &value)).collect()
+        }
+    }
+}
+
+impl Project {
+
+    fn from_yaml(yaml: &ProjectYaml, config: &ConfigYaml) -> Self {
+
+        let into = |iter: &[String]| { iter
+            .iter()
+            .map(|dir|
+                config.expand_dir(&dir, Some(&yaml))
+            )
+            .collect()
+        };
+
+        Self {
+            vscode:   into(&yaml.vscode),
+            zed:      into(&yaml.zed),
+            terminal: into(&yaml.terminal),
+            obsidian: yaml.obsidian.to_owned(),
+
+            name: yaml.name.to_owned(),
+            code: yaml.code.to_owned(),
+        }
+    }
+}
 
 
-    pub fn expand_dir(&self, name: &str, proj: Option<&Project>) -> Option<String> {
+impl ConfigYaml {
+
+
+    pub fn expand_dir(&self, name: &str, proj: Option<&ProjectYaml>) -> String {
 
         let     re   = Regex::new(r"\{(\w+)\}").unwrap();
-        let mut path = self.get_dir_expect(name, proj);
+        let mut path = name.to_owned();
 
         let mut i    = 0;
 
@@ -82,44 +134,10 @@ impl Config {
 
         };
 
-        Some(result)
+        result
     }
 
-    fn expand_all(&mut self) {
-
-        let mut new_dirs = HashMap::new();
-
-        for dir in self.dirs.keys() {
-            let expanded = self.expand_dir(&dir, None).unwrap();
-
-            new_dirs.insert(dir.to_owned(), expanded);
-        }
-
-        self.dirs = new_dirs;
-
-
-        let mut buffer = Vec::new();
-
-        for proj in self.projects.iter() {
-
-            let mut new_dirs = HashMap::new();
-
-
-            for dir in proj.dirs.keys() {
-                let expanded = self.expand_dir(&dir, Some(proj)).unwrap();
-
-                new_dirs.insert(dir.to_owned(), expanded);
-            }
-
-            buffer.push(new_dirs);
-        }
-
-        for (proj, buffer) in self.projects.iter_mut().zip(buffer) {
-            proj.dirs = buffer;
-        }
-    }
-
-    fn get_dir(&self, name: &str, proj: Option<&Project>) -> Option<String> {
+    fn get_dir(&self, name: &str, proj: Option<&ProjectYaml>) -> Option<String> {
         self.dirs.get(name)
             .cloned()
             .or_else(||
@@ -127,7 +145,7 @@ impl Config {
             )
     }
 
-    fn get_dir_expect(&self, name: &str, proj: Option<&Project>) -> String {
+    fn get_dir_expect(&self, name: &str, proj: Option<&ProjectYaml>) -> String {
         self.get_dir(name, proj).unwrap_or_else(|| panic!("Unable to find dir definition for {name}"))
     }
 }
@@ -143,6 +161,7 @@ mod tests {
     fn test_config() {
         let config = get_config();
 
+        // TODO: create a config.test.yaml
         assert_eq!(&config.projects[0].code, "tk")
     }
 
