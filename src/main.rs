@@ -15,9 +15,8 @@ fn main() {
 
     let config = config::get_config();
 
-    let test = config.expand_dir("timekeeper", None).unwrap();
+    dbg!("{}", &config);
 
-    println!(">>>> test dir: {}", test.to_str().unwrap());
 
     // let new_terminal = terminal::new_window("");
 
@@ -35,7 +34,7 @@ fn main() {
 
     // print!("{}", config.dirs.get("work").unwrap())
 
-    exec::launch_project(&config, &config.projects[0]);
+    // exec::launch_project(&config, &config.projects[0]);
 
 
 }

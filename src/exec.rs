@@ -5,11 +5,20 @@ use crate::{config::{Config, Project}, terminal};
 
 pub fn launch_project(config: &Config, proj: &Project) {
 
-    // TODO:
-    proj.vscode  .iter().map(|x| config.expand_dir(x, Some(proj)).unwrap()).for_each(|x| open_vscode(x.to_str().unwrap()));
-    proj.zed     .iter().map(|x| config.expand_dir(x, Some(proj)).unwrap()).for_each(|x| open_zed   (x.to_str().unwrap()));
 
-    proj.terminal.iter().map(|x| config.expand_dir(x, Some(proj)).unwrap()).for_each(|x| { terminal::new_window(x.to_str().unwrap()); });
+    let launch = |iter: &[String], func: Box<dyn Fn(String) -> ()>| { iter
+        .iter()
+        .map(|x|
+            config.expand_dir(x, Some(proj)).unwrap()
+        )
+        .for_each(|x| func(x));
+    };
+
+    fn open_terminal(dir: &str) { terminal::new_window(dir); }
+
+    launch(&proj.vscode,   Box::new(|x| open_vscode  (&x)));
+    launch(&proj.zed,      Box::new(|x| open_zed     (&x)));
+    launch(&proj.terminal, Box::new(|x| open_terminal(&x)));
 
     open_obsidian(&proj.obsidian);
 

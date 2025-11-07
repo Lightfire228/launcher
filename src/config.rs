@@ -1,5 +1,5 @@
 use serde::{Serialize, Deserialize};
-use std::{collections::{HashMap, HashSet}, fs, path::{Path, PathBuf}};
+use std::{collections::{HashMap, HashSet}, fs};
 use regex::Regex;
 // use std::fs;
 
@@ -14,13 +14,15 @@ pub fn get_config() -> Config {
     config
 }
 
-#[derive(Serialize, Deserialize)]
+
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Config {
     #[serde(default)] pub projects: Vec<Project>,
     #[serde(default)] pub dirs:     Dirs,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Project {
     pub name: String,
     pub code: String,
@@ -45,10 +47,10 @@ pub struct Project {
 impl Config {
 
 
-    pub fn expand_dir(&self, name: &str, proj: Option<&Project>) -> Option<PathBuf> {
+    pub fn expand_dir(&self, name: &str, proj: Option<&Project>) -> Option<String> {
 
         let     re   = Regex::new(r"\{(\w+)\}").unwrap();
-        let mut path = name.to_owned();
+        let mut path = self.get_dir_expect(name, proj);
 
         let mut i    = 0;
 
@@ -80,9 +82,41 @@ impl Config {
 
         };
 
-        let result = Path::new(&result).to_owned();
-
         Some(result)
+    }
+
+    fn expand_all(&mut self) {
+
+        let mut new_dirs = HashMap::new();
+
+        for dir in self.dirs.keys() {
+            let expanded = self.expand_dir(&dir, None).unwrap();
+
+            new_dirs.insert(dir.to_owned(), expanded);
+        }
+
+        self.dirs = new_dirs;
+
+
+        let mut buffer = Vec::new();
+
+        for proj in self.projects.iter() {
+
+            let mut new_dirs = HashMap::new();
+
+
+            for dir in proj.dirs.keys() {
+                let expanded = self.expand_dir(&dir, Some(proj)).unwrap();
+
+                new_dirs.insert(dir.to_owned(), expanded);
+            }
+
+            buffer.push(new_dirs);
+        }
+
+        for (proj, buffer) in self.projects.iter_mut().zip(buffer) {
+            proj.dirs = buffer;
+        }
     }
 
     fn get_dir(&self, name: &str, proj: Option<&Project>) -> Option<String> {
@@ -97,6 +131,7 @@ impl Config {
         self.get_dir(name, proj).unwrap_or_else(|| panic!("Unable to find dir definition for {name}"))
     }
 }
+
 
 
 
