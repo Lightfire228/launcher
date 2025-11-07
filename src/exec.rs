@@ -7,36 +7,27 @@ pub fn launch_project(proj: &Project) {
 
     fn open_terminal(dir: &str) { terminal::new_window(dir); }
 
-    proj.vscode  .iter().for_each(|x| open_vscode  (x));
-    proj.zed     .iter().for_each(|x| open_zed     (x));
+    proj.vscode  .iter().for_each(|x| launch_vscode(x));
+    proj.zed     .iter().for_each(|x| launch_zed   (x));
     proj.terminal.iter().for_each(|x| open_terminal(x));
 
-    open_obsidian(&proj.obsidian);
+    launch_obsidian(&proj.obsidian);
 
 }
 
-pub fn open_vscode(path: &str) {
+pub fn launch_vscode(path: &str) {
     _open_editor("code", path);
 }
 
-pub fn open_zed(path: &str) {
+pub fn launch_zed(path: &str) {
     _open_editor("zed", path);
 }
 
-pub fn open_obsidian(name: &str) {
+pub fn launch_obsidian(name: &str) {
     let uri = format!("obsidian://open?vault=Notes&file={}", urlencoding::encode(name));
 
     _launch_file_uri(&uri);
 }
-
-pub fn open_terminal(path: &str) {
-    Command::new("systemd-run")
-        .args(["--user", "konsole", "--workdir", path])
-        .output()
-        .expect("failed to open konsole")
-    ;
-}
-
 
 fn _open_editor(command: &str, path: &str) {
     Command::new(command)
@@ -54,7 +45,7 @@ fn _launch_file_uri(uri: &str) {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    // use super::*;
 
     // #[test]
     // fn test_vscode() {
@@ -65,10 +56,5 @@ mod tests {
     // fn test_obsidian() {
     //     open_obsidian("Game - Silksong");
     // }
-
-    #[test]
-    fn test_konsole() {
-        open_terminal("/tmp");
-    }
 
 }

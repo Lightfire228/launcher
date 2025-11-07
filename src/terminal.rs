@@ -1,6 +1,5 @@
 use dbus::blocking::{Connection, Proxy};
-use std::{collections::HashSet, time::{Duration, Instant}};
-use crate::exec;
+use std::{collections::HashSet, process::Command, time::{Duration, Instant}};
 
 #[derive(Debug)]
 pub struct TerminalInstance {
@@ -29,7 +28,7 @@ pub fn new_window(path: &str) -> TerminalInstance {
     let names_before = _get_session_names_by(&proxy, filter);
     let names_before = _to_set(names_before);
 
-    exec::open_terminal(path);
+    launch_terminal(path);
 
     let start = Instant::now();
     let dbus_session = loop {
@@ -78,4 +77,25 @@ fn _get_pid(proxy: &Proxy<&Connection>, name: &str) -> u32 {
     let (pid,): (u32,) = proxy.method_call("org.freedesktop.DBus", "GetConnectionUnixProcessID", (name,)).unwrap();
 
     pid
+}
+
+
+pub fn launch_terminal(path: &str) {
+    Command::new("systemd-run")
+        .args(["--user", "konsole", "--workdir", path])
+        .output()
+        .expect("failed to open konsole")
+    ;
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_konsole() {
+        new_window("/tmp");
+    }
+
 }
