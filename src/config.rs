@@ -6,8 +6,12 @@ use regex::Regex;
 type Dirs = HashMap<String, String>;
 
 pub fn get_config() -> Config {
+    get_config_from("./config.yaml")
+}
 
-    let config_str = fs::read_to_string("./config.yaml").expect("Unable to read config file");
+pub fn get_config_from(dir: &str) -> Config {
+
+    let config_str = fs::read_to_string(dir).unwrap_or_else(|_| panic!("Unable to read config file: {dir}"));
 
     let config: ConfigYaml = serde_yml::from_str(&config_str).expect("Unable to parse config file");
 
@@ -159,10 +163,9 @@ mod tests {
 
     #[test]
     fn test_config() {
-        let config = get_config();
+        let config = get_config_from("./config.test.yaml");
 
-        // TODO: create a config.test.yaml
-        assert_eq!(&config.projects[0].code, "tk")
+        assert_eq!(&config.projects[0].code, "p1")
     }
 
 }

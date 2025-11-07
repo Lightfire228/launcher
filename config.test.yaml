@@ -1,0 +1,30 @@
+
+projects:
+  -
+    name: Project 1
+    code: p1
+
+    vscode:
+      - '{foo}'
+
+    obsidian: 2025-08-25 - Some Note
+
+    terminal:
+      - '{foo}'
+
+    dirs:
+      foo: '{bar}/some/folder/'
+  -
+    name: Project 2
+    code: p2
+
+    vscode:
+      - '{bar}'
+
+    obsidian: 2025-08-25 - Some Other Note
+
+
+dirs:
+  home: /home/user
+  bar:  '{home}/bar/'
+  baz:  '{home}/baz'

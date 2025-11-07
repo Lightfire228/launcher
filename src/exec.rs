@@ -1,21 +1,15 @@
 use std::process::Command;
 use urlencoding;
 
-use crate::{config::{Config, Project}, terminal};
+use crate::{config::{Project}, terminal};
 
-pub fn launch_project(config: &Config, proj: &Project) {
-
-
-    let launch = |iter: &[String], func: Box<dyn Fn(&str) -> ()>| { iter
-        .iter()
-        .for_each(|x| func(x));
-    };
+pub fn launch_project(proj: &Project) {
 
     fn open_terminal(dir: &str) { terminal::new_window(dir); }
 
-    launch(&proj.vscode,   Box::new(|x| open_vscode  (&x)));
-    launch(&proj.zed,      Box::new(|x| open_zed     (&x)));
-    launch(&proj.terminal, Box::new(|x| open_terminal(&x)));
+    proj.vscode  .iter().for_each(|x| open_vscode  (x));
+    proj.zed     .iter().for_each(|x| open_zed     (x));
+    proj.terminal.iter().for_each(|x| open_terminal(x));
 
     open_obsidian(&proj.obsidian);
 

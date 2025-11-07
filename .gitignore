@@ -2,3 +2,5 @@
 
 *.yaml
 *.yml
+
+!config.test.yaml
