@@ -1,13 +1,6 @@
 use dbus::blocking::{Connection, Proxy};
 use std::{collections::HashSet, process::Command, time::{Duration, Instant}};
 
-#[derive(Debug)]
-pub struct TerminalInstance {
-    pub dbus_session: String,
-    pub pid:          u32,
-}
-
-
 pub fn new_window(path: &str) -> TerminalInstance {
 
     let conn   = Connection::new_session().unwrap();
@@ -21,6 +14,8 @@ pub fn new_window(path: &str) -> TerminalInstance {
 
     let start = Instant::now();
     let dbus_session = loop {
+        assert!(start.elapsed().as_millis() < 1000, "Could not find DBus id for spawned konsole session");
+
         let names_after = _get_session_names_by(&proxy, filter);
         let unique      = _diff(&names_before, &names_after);
 
@@ -29,13 +24,34 @@ pub fn new_window(path: &str) -> TerminalInstance {
         if !unique.is_empty() {
             break unique.first().unwrap().to_owned();
         }
-
-        assert!(start.elapsed().as_millis() < 1000, "Could not find DBus id for spawned konsole session");
     };
 
     TerminalInstance {
-        pid: _get_pid(&proxy, &dbus_session),
+        pid:        _get_pid(&proxy, &dbus_session),
+        connection: conn,
         dbus_session,
+    }
+}
+
+
+pub struct TerminalInstance {
+    pub dbus_session: String,
+    pub pid:          u32,
+
+    connection: Connection,
+}
+
+impl TerminalInstance {
+    pub fn new_tab(&self, dir: &str) {
+        use crate::dbus_codegen::konsole_windows_1::OrgKdeKonsoleWindow;
+
+        let proxy = self.get_proxy("/Windows/1");
+
+        proxy.new_session__("", dir).expect("Unable to spawn new tab");
+    }
+
+    fn get_proxy<'a>(&'a self, path: &'a str) -> Proxy<'a, &'a Connection> {
+        self.connection.with_proxy(&self.dbus_session, path, Duration::from_millis(5000))
     }
 }
 

@@ -1,6 +1,8 @@
 use serde::{Serialize, Deserialize};
 use std::{collections::{HashMap, HashSet}, fs};
 use regex::Regex;
+
+use crate::config;
 // use std::fs;
 
 type Dirs = HashMap<String, String>;
@@ -31,9 +33,13 @@ pub struct Project {
     pub vscode:   Vec<String>,
     pub zed:      Vec<String>,
     pub obsidian: String,
-    pub terminal: Vec<String>,
+    pub terminal: Terminal,
 }
 
+#[derive(Debug)]
+pub struct Terminal {
+    pub tabs: Vec<String>
+}
 
 
 
@@ -51,19 +57,16 @@ struct ProjectYaml {
     #[serde(default)] pub vscode:   Vec<String>,
     #[serde(default)] pub zed:      Vec<String>,
     #[serde(default)] pub obsidian: String,
-    #[serde(default)] pub terminal: Vec<String>,
     // #[serde(default)] pub terminal: TerminalYaml,
+    #[serde(default)] pub terminal: Vec<String>,
 
     #[serde(default)] pub dirs:     Dirs,
 }
 
-
-
-// #[derive(Serialize, Deserialize, Default)]
+// #[derive(Serialize, Deserialize, Default, Debug)]
 // pub struct TerminalYaml {
 //     #[serde(default)] pub tabs: Vec<String>,
 // }
-
 
 
 impl From<ConfigYaml> for Config {
@@ -79,22 +82,23 @@ impl Project {
 
     fn from_yaml(yaml: &ProjectYaml, config: &ConfigYaml) -> Self {
 
-        let into = |iter: &[String]| { iter
-            .iter()
-            .map(|dir|
-                config.expand_dir(&dir, Some(&yaml))
-            )
-            .collect()
-        };
-
         Self {
-            vscode:   into(&yaml.vscode),
-            zed:      into(&yaml.zed),
-            terminal: into(&yaml.terminal),
+            vscode:   expand_all(&yaml.vscode,   config, yaml),
+            zed:      expand_all(&yaml.zed,      config, yaml),
+
+            terminal: Terminal::from_yaml(&yaml, &config),
             obsidian: yaml.obsidian.to_owned(),
 
             name: yaml.name.to_owned(),
             code: yaml.code.to_owned(),
+        }
+    }
+}
+
+impl Terminal {
+    fn from_yaml(yaml: &ProjectYaml, config: &ConfigYaml) -> Self {
+        Self {
+            tabs: expand_all(&yaml.terminal, config, yaml)
         }
     }
 }
@@ -154,6 +158,19 @@ impl ConfigYaml {
     }
 }
 
+fn expand_all(
+    iter:   &[String],
+    config: &ConfigYaml,
+    proj:   &ProjectYaml
+)
+    -> Vec<String>
+{ iter
+    .iter()
+    .map(|dir|
+        config.expand_dir(&dir, Some(proj))
+    )
+    .collect()
+}
 
 
 

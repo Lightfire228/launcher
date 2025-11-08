@@ -3,4 +3,5 @@
 #![allow(dead_code)]
 
 pub mod konsole_mainwindow;
+pub mod konsole_windows_1;
 pub mod org_freedesktop_dbus;
