@@ -5,6 +5,8 @@ use crate::{config::{Project}, terminal};
 
 pub fn launch_project(proj: &Project) {
 
+    // TODO: check if dirs actually exist
+
     fn open_terminal(dir: &str) { terminal::new_window(dir); }
 
     proj.vscode  .iter().for_each(|x| launch_vscode(x));

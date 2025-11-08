@@ -12,17 +12,13 @@ pub fn display_menu(config: &Config) -> &Project {
         .collect()
     ;
 
-    dbg!("{}", &choices);
-
     println!("Menu:");
     for proj in &config.projects {
         println!("  - {:6} - {}", proj.code, proj.name);
     }
 
     let usr_in = prompt();
-    let usr_in = usr_in.trim();
-
-    let proj = choices.get(usr_in);
+    let proj   = choices.get(usr_in.as_str());
 
     return proj.expect("Unable to find project");
 }
@@ -31,12 +27,12 @@ pub fn display_menu(config: &Config) -> &Project {
 fn prompt() -> String {
 
     print!("> ");
-    io::stdout().flush().unwrap();
+    io::stdout().flush().expect("Unable to flush stdout");
 
     let mut buffer = String::new();
     let     stdin  = io::stdin();
 
-    stdin.read_line(&mut buffer).unwrap();
+    stdin.read_line(&mut buffer).expect("Unable to read from stdin");
 
-    buffer
+    buffer.trim().to_owned()
 }

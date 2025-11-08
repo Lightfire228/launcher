@@ -28,7 +28,7 @@ pub fn new_window(path: &str) -> TerminalInstance {
     let names_before = _get_session_names_by(&proxy, filter);
     let names_before = _to_set(names_before);
 
-    launch_terminal(path);
+    _launch_terminal(path);
 
     let start = Instant::now();
     let dbus_session = loop {
@@ -41,9 +41,7 @@ pub fn new_window(path: &str) -> TerminalInstance {
             break unique.first().unwrap().to_owned();
         }
 
-        if start.elapsed().as_secs() > 1 {
-            panic!("Could not find DBus id for spawned konsole session");
-        }
+        assert!(start.elapsed().as_millis() < 1000, "Could not find DBus id for spawned konsole session");
     };
 
     TerminalInstance {
@@ -80,7 +78,7 @@ fn _get_pid(proxy: &Proxy<&Connection>, name: &str) -> u32 {
 }
 
 
-pub fn launch_terminal(path: &str) {
+fn _launch_terminal(path: &str) {
     Command::new("systemd-run")
         .args(["--user", "konsole", "--workdir", path])
         .output()

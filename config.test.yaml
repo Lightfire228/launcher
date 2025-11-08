@@ -12,6 +12,7 @@ projects:
     terminal:
       - '{foo}'
 
+    # Dirs defined here are scoped to each project
     dirs:
       foo: '{bar}/some/folder/'
   -
@@ -19,6 +20,9 @@ projects:
     code: p2
 
     vscode:
+      - '{bar}'
+
+    zed:
       - '{bar}'
 
     obsidian: 2025-08-25 - Some Other Note
