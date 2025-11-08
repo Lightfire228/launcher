@@ -8,18 +8,7 @@ pub struct TerminalInstance {
 }
 
 
-pub fn list_session_names() -> Vec<String> {
-
-    let conn  = Connection::new_session().unwrap();
-    let proxy = conn.with_proxy("org.freedesktop.DBus", "/", Duration::from_millis(5000));
-
-    _get_session_names(&proxy)
-
-}
-
-
 pub fn new_window(path: &str) -> TerminalInstance {
-
 
     let conn   = Connection::new_session().unwrap();
     let proxy  = conn.with_proxy("org.freedesktop.DBus", "/", Duration::from_millis(5000));
@@ -58,9 +47,14 @@ fn _get_session_names(proxy: &Proxy<&Connection>) -> Vec<String> {
 fn _get_session_names_by<T>(proxy: &Proxy<&Connection>, filter: T) -> Vec<String>
     where T: Fn(&String) -> bool
 {
-    let (names,): (Vec<String>,) = proxy.method_call("org.freedesktop.DBus", "ListNames", ()).unwrap();
+    use crate::dbus_codegen::org_freedesktop_dbus::OrgFreedesktopDBus;
 
-    names.into_iter().filter(filter).collect()
+    proxy
+        .list_names()
+        .expect("Unable to list dbus session names")
+        .into_iter()
+        .filter(filter)
+        .collect()
 }
 
 fn _to_set(names: Vec<String>) -> HashSet<String> {
@@ -72,9 +66,13 @@ fn _diff(before: &HashSet<String>, after: &[String]) -> Vec<String> {
 }
 
 fn _get_pid(proxy: &Proxy<&Connection>, name: &str) -> u32 {
-    let (pid,): (u32,) = proxy.method_call("org.freedesktop.DBus", "GetConnectionUnixProcessID", (name,)).unwrap();
 
-    pid
+    use crate::dbus_codegen::org_freedesktop_dbus::OrgFreedesktopDBus;
+
+    proxy
+        .get_connection_unix_process_id(name)
+        .unwrap_or_else(|_| panic!("Unable to get PID of {name}"))
+
 }
 
 

@@ -1,0 +1,257 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+    <interface name="org.kde.konsole.Konsole.MainWindow">
+        <method name="viewFullScreen">
+            <arg name="fullScreen" type="b" direction="in" />
+        </method>
+    </interface>
+    <interface name="org.kde.konsole.KXmlGuiWindow">
+        <property name="hasMenuBar" type="b" access="read" />
+        <property name="autoSaveSettings" type="b" access="read" />
+        <property name="autoSaveGroup" type="s" access="read" />
+        <property name="standardToolBarMenuEnabled" type="b" access="readwrite" />
+        <property name="toolBars" type="as" access="read" />
+        <method name="configureToolbars"></method>
+        <method name="slotStateChanged">
+            <arg name="newstate" type="s" direction="in" />
+        </method>
+        <method name="slotStateChanged">
+            <arg name="newstate" type="s" direction="in" />
+            <arg name="reverse" type="b" direction="in" />
+        </method>
+        <method name="isToolBarVisible">
+            <arg type="b" direction="out" />
+            <arg name="name" type="s" direction="in" />
+        </method>
+        <method name="setToolBarVisible">
+            <arg name="name" type="s" direction="in" />
+            <arg name="visible" type="b" direction="in" />
+        </method>
+    </interface>
+    <interface name="org.kde.konsole.KMainWindow">
+        <property name="hasMenuBar" type="b" access="read" />
+        <property name="autoSaveSettings" type="b" access="read" />
+        <property name="autoSaveGroup" type="s" access="read" />
+        <method name="setCaption">
+            <arg name="caption" type="s" direction="in" />
+        </method>
+        <method name="setCaption">
+            <arg name="caption" type="s" direction="in" />
+            <arg name="modified" type="b" direction="in" />
+        </method>
+        <method name="setPlainCaption">
+            <arg name="caption" type="s" direction="in" />
+        </method>
+        <method name="appHelpActivated">
+        </method>
+        <method name="setSettingsDirty">
+        </method>
+    </interface>
+    <interface name="org.qtproject.Qt.QMainWindow">
+        <property name="iconSize" type="(ii)" access="readwrite">
+            <annotation name="org.qtproject.QtDBus.QtTypeName" value="QSize" />
+        </property>
+        <property name="animated" type="b" access="readwrite" />
+        <property name="documentMode" type="b" access="readwrite" />
+        <property name="dockNestingEnabled" type="b" access="readwrite" />
+        <property name="unifiedTitleAndToolBarOnMac" type="b" access="readwrite" />
+        <method name="setAnimated">
+            <arg name="enabled" type="b" direction="in" />
+        </method>
+        <method name="setDockNestingEnabled">
+            <arg name="enabled" type="b" direction="in" />
+        </method>
+        <method name="setUnifiedTitleAndToolBarOnMac">
+            <arg name="set" type="b" direction="in" />
+        </method>
+    </interface>
+    <interface name="org.qtproject.Qt.QWidget">
+        <property name="modal" type="b" access="read" />
+        <property name="enabled" type="b" access="readwrite" />
+        <property name="geometry" type="(iiii)" access="readwrite">
+            <annotation name="org.qtproject.QtDBus.QtTypeName" value="QRect" />
+        </property>
+        <property name="frameGeometry" type="(iiii)" access="read">
+            <annotation name="org.qtproject.QtDBus.QtTypeName" value="QRect" />
+        </property>
+        <property name="normalGeometry" type="(iiii)" access="read">
+            <annotation name="org.qtproject.QtDBus.QtTypeName" value="QRect" />
+        </property>
+        <property name="x" type="i" access="read" />
+        <property name="y" type="i" access="read" />
+        <property name="pos" type="(ii)" access="readwrite">
+            <annotation name="org.qtproject.QtDBus.QtTypeName" value="QPoint" />
+        </property>
+        <property name="frameSize" type="(ii)" access="read">
+            <annotation name="org.qtproject.QtDBus.QtTypeName" value="QSize" />
+        </property>
+        <property name="size" type="(ii)" access="readwrite">
+            <annotation name="org.qtproject.QtDBus.QtTypeName" value="QSize" />
+        </property>
+        <property name="width" type="i" access="read" />
+        <property name="height" type="i" access="read" />
+        <property name="rect" type="(iiii)" access="read">
+            <annotation name="org.qtproject.QtDBus.QtTypeName" value="QRect" />
+        </property>
+        <property name="childrenRect" type="(iiii)" access="read">
+            <annotation name="org.qtproject.QtDBus.QtTypeName" value="QRect" />
+        </property>
+        <property name="minimumSize" type="(ii)" access="readwrite">
+            <annotation name="org.qtproject.QtDBus.QtTypeName" value="QSize" />
+        </property>
+        <property name="maximumSize" type="(ii)" access="readwrite">
+            <annotation name="org.qtproject.QtDBus.QtTypeName" value="QSize" />
+        </property>
+        <property name="minimumWidth" type="i" access="readwrite" />
+        <property name="minimumHeight" type="i" access="readwrite" />
+        <property name="maximumWidth" type="i" access="readwrite" />
+        <property name="maximumHeight" type="i" access="readwrite" />
+        <property name="sizeIncrement" type="(ii)" access="readwrite">
+            <annotation name="org.qtproject.QtDBus.QtTypeName" value="QSize" />
+        </property>
+        <property name="baseSize" type="(ii)" access="readwrite">
+            <annotation name="org.qtproject.QtDBus.QtTypeName" value="QSize" />
+        </property>
+        <property name="mouseTracking" type="b" access="readwrite" />
+        <property name="tabletTracking" type="b" access="readwrite" />
+        <property name="isActiveWindow" type="b" access="read" />
+        <property name="focus" type="b" access="read" />
+        <property name="updatesEnabled" type="b" access="readwrite" />
+        <property name="visible" type="b" access="readwrite" />
+        <property name="minimized" type="b" access="read" />
+        <property name="maximized" type="b" access="read" />
+        <property name="fullScreen" type="b" access="read" />
+        <property name="sizeHint" type="(ii)" access="read">
+            <annotation name="org.qtproject.QtDBus.QtTypeName" value="QSize" />
+        </property>
+        <property name="minimumSizeHint" type="(ii)" access="read">
+            <annotation name="org.qtproject.QtDBus.QtTypeName" value="QSize" />
+        </property>
+        <property name="acceptDrops" type="b" access="readwrite" />
+        <property name="windowTitle" type="s" access="readwrite" />
+        <property name="windowIconText" type="s" access="readwrite" />
+        <property name="windowOpacity" type="d" access="readwrite" />
+        <property name="windowModified" type="b" access="readwrite" />
+        <property name="toolTip" type="s" access="readwrite" />
+        <property name="toolTipDuration" type="i" access="readwrite" />
+        <property name="statusTip" type="s" access="readwrite" />
+        <property name="whatsThis" type="s" access="readwrite" />
+        <property name="accessibleName" type="s" access="readwrite" />
+        <property name="accessibleDescription" type="s" access="readwrite" />
+        <property name="accessibleIdentifier" type="s" access="readwrite" />
+        <property name="autoFillBackground" type="b" access="readwrite" />
+        <property name="styleSheet" type="s" access="readwrite" />
+        <property name="windowFilePath" type="s" access="readwrite" />
+        <method name="setEnabled">
+            <arg type="b" direction="in" />
+        </method>
+        <method name="setDisabled">
+            <arg type="b" direction="in" />
+        </method>
+        <method name="setWindowModified">
+            <arg type="b" direction="in" />
+        </method>
+        <method name="setWindowTitle">
+            <arg type="s" direction="in" />
+        </method>
+        <method name="setStyleSheet">
+            <arg name="styleSheet" type="s" direction="in" />
+        </method>
+        <method name="setFocus">
+        </method>
+        <method name="update">
+        </method>
+        <method name="repaint">
+        </method>
+        <method name="setVisible">
+            <arg name="visible" type="b" direction="in" />
+        </method>
+        <method name="setHidden">
+            <arg name="hidden" type="b" direction="in" />
+        </method>
+        <method name="show">
+        </method>
+        <method name="hide">
+        </method>
+        <method name="showMinimized">
+        </method>
+        <method name="showMaximized">
+        </method>
+        <method name="showFullScreen">
+        </method>
+        <method name="showNormal">
+        </method>
+        <method name="close">
+            <arg type="b" direction="out" />
+        </method>
+        <method name="raise">
+        </method>
+        <method name="lower">
+        </method>
+    </interface>
+    <interface name="org.kde.KMainWindow">
+        <method name="actions">
+            <arg type="as" direction="out" />
+        </method>
+        <method name="activateAction">
+            <arg type="b" direction="out" />
+            <arg name="action" type="s" direction="in" />
+        </method>
+        <method name="disableAction">
+            <arg type="b" direction="out" />
+            <arg name="action" type="s" direction="in" />
+        </method>
+        <method name="enableAction">
+            <arg type="b" direction="out" />
+            <arg name="action" type="s" direction="in" />
+        </method>
+        <method name="actionIsEnabled">
+            <arg type="b" direction="out" />
+            <arg name="action" type="s" direction="in" />
+        </method>
+        <method name="actionToolTip">
+            <arg type="s" direction="out" />
+            <arg name="action" type="s" direction="in" />
+        </method>
+        <method name="winId">
+            <arg type="x" direction="out" />
+        </method>
+        <method name="grabWindowToClipBoard">
+        </method>
+    </interface>
+    <interface name="org.freedesktop.DBus.Properties">
+        <method name="Get">
+            <arg name="interface_name" type="s" direction="in" />
+            <arg name="property_name" type="s" direction="in" />
+            <arg name="value" type="v" direction="out" />
+        </method>
+        <method name="Set">
+            <arg name="interface_name" type="s" direction="in" />
+            <arg name="property_name" type="s" direction="in" />
+            <arg name="value" type="v" direction="in" />
+        </method>
+        <method name="GetAll">
+            <arg name="interface_name" type="s" direction="in" />
+            <arg name="values" type="a{sv}" direction="out" />
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap" />
+        </method>
+        <signal name="PropertiesChanged">
+            <arg name="interface_name" type="s" direction="out" />
+            <arg name="changed_properties" type="a{sv}" direction="out" />
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out1" value="QVariantMap" />
+            <arg name="invalidated_properties" type="as" direction="out" />
+        </signal>
+    </interface>
+    <interface name="org.freedesktop.DBus.Introspectable">
+        <method name="Introspect">
+            <arg name="xml_data" type="s" direction="out" />
+        </method>
+    </interface>
+    <interface name="org.freedesktop.DBus.Peer">
+        <method name="Ping" />
+        <method name="GetMachineId">
+            <arg name="machine_uuid" type="s" direction="out" />
+        </method>
+    </interface>
+    <node name="actions" />
+</node>
