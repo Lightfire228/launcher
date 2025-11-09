@@ -9,5 +9,7 @@ fn main() {
     let config = config::get_config();
     let proj   = menu  ::display_menu(&config);
 
-    exec::launch_project(proj);
+    if let Some(proj) = proj {
+        exec::launch_project(proj);
+    }
 }
