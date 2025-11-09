@@ -8,7 +8,9 @@ pub fn launch_project(proj: &Project) {
     proj.vscode  .iter().for_each(|x| launch_vscode(x));
     proj.zed     .iter().for_each(|x| launch_zed   (x));
 
-    launch_obsidian(&proj.obsidian);
+    if let Some(note) = &proj.obsidian {
+        launch_obsidian(note);
+    }
 
     if let Some(tab1) = proj.terminal.tabs.first() {
         _launch_terminal(tab1, proj);
@@ -21,7 +23,7 @@ pub fn launch_vscode(path: &str) {
 }
 
 pub fn launch_zed(path: &str) {
-    _open_editor("zed", path);
+    _open_editor("zeditor", path);
 }
 
 pub fn launch_obsidian(name: &str) {

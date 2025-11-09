@@ -2,9 +2,6 @@ use serde::{Serialize, Deserialize};
 use std::{collections::{HashMap, HashSet}, fs};
 use regex::Regex;
 
-use crate::config;
-// use std::fs;
-
 type Dirs = HashMap<String, String>;
 
 pub fn get_config() -> Config {
@@ -32,7 +29,7 @@ pub struct Project {
 
     pub vscode:   Vec<String>,
     pub zed:      Vec<String>,
-    pub obsidian: String,
+    pub obsidian: Option<String>,
     pub terminal: Terminal,
 }
 
@@ -56,7 +53,7 @@ struct ProjectYaml {
 
     #[serde(default)] pub vscode:   Vec<String>,
     #[serde(default)] pub zed:      Vec<String>,
-    #[serde(default)] pub obsidian: String,
+    #[serde(default)] pub obsidian: Option<String>,
     // #[serde(default)] pub terminal: TerminalYaml,
     #[serde(default)] pub terminal: Vec<String>,
 
@@ -87,7 +84,7 @@ impl Project {
             zed:      expand_all(&yaml.zed,      config, yaml),
 
             terminal: Terminal::from_yaml(&yaml, &config),
-            obsidian: yaml.obsidian.to_owned(),
+            obsidian: yaml.obsidian.clone(),
 
             name: yaml.name.to_owned(),
             code: yaml.code.to_owned(),

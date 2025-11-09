@@ -3,6 +3,7 @@ use std::{collections::HashMap, io::{self, Write}};
 
 use crate::config::{Config, Project};
 
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 pub fn display_menu(config: &Config) -> &Project {
 
@@ -13,6 +14,7 @@ pub fn display_menu(config: &Config) -> &Project {
     ;
 
     println!("Menu:");
+    println!(" -- version: {}\n", VERSION);
     for proj in &config.projects {
         println!("  - {:6} - {}", proj.code, proj.name);
     }
