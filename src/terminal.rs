@@ -34,6 +34,7 @@ pub fn new_window(path: &str) -> TerminalInstance {
 }
 
 
+#[allow(dead_code)]
 pub struct TerminalInstance {
     pub dbus_session: String,
     pub pid:          u32,

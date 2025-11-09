@@ -11,6 +11,7 @@ projects:
 
     terminal:
       - '{foo}'
+      - '{bar}'
 
     # Dirs defined here are scoped to each project
     dirs:
