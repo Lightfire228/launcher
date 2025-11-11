@@ -15,7 +15,7 @@ pub fn display_menu(config: &Config) -> Option<&Project> {
     ;
 
     loop {
-        print_menu(&choices);
+        print_menu(&config.projects);
     
         let usr_in = prompt();
         let usr_in = usr_in.as_str();
@@ -32,12 +32,12 @@ pub fn display_menu(config: &Config) -> Option<&Project> {
 
 }
 
-fn print_menu(choices: &HashMap<&str, &Project>) {
+fn print_menu(projects: &[Project]) {
 
     println!("Menu:");
     println!(" -- version: {}\n", VERSION);
 
-    for proj in choices.values() {
+    for proj in projects {
         println!("  - {:6} - {}", proj.code, proj.name);
     }
 

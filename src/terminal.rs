@@ -21,8 +21,8 @@ pub fn new_window(path: &str) -> TerminalInstance {
 
         assert!(unique.len() <= 1, "Multiple new DBus ids were found for spawned console session");
 
-        if !unique.is_empty() {
-            break unique.first().unwrap().to_owned();
+        if let Some(first) = unique.first() {
+            break first.to_owned();
         }
     };
 

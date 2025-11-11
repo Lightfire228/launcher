@@ -73,7 +73,7 @@ impl From<ConfigYaml> for Config {
 
     fn from(value: ConfigYaml) -> Self {
         Self {
-            projects: value.projects.iter().map(|p| Project::from_yaml(&p, &value)).collect()
+            projects: value.projects.iter().map(|p| Project::from_yaml(&p, &value)).collect(),
         }
     }
 }
