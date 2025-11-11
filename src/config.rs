@@ -1,16 +1,19 @@
 use serde::{Serialize, Deserialize};
-use std::{collections::{HashMap, HashSet}, fs};
+use std::{collections::{HashMap, HashSet}, fs, path::Path};
 use regex::Regex;
 
 type Dirs = HashMap<String, String>;
 
 pub fn get_config() -> Config {
-    get_config_from("./config.yaml")
+    let path = local_config_path();
+    get_config_from(&path)
 }
 
-pub fn get_config_from(dir: &str) -> Config {
+pub fn get_config_from(path: &str) -> Config {
 
-    let config_str = fs::read_to_string(dir).unwrap_or_else(|_| panic!("Unable to read config file: {dir}"));
+    check_config_file(path);
+
+    let config_str = fs::read_to_string(path).unwrap_or_else(|_| panic!("Unable to read config file: {path}"));
 
     let config: ConfigYaml = serde_yml::from_str(&config_str).expect("Unable to parse config file");
 
@@ -169,6 +172,15 @@ fn expand_all(
     .collect()
 }
 
+fn local_config_path() -> String {
+    format!("{}/.config/fourth_bridge/config.yaml", env!("HOME"))
+}
+
+fn check_config_file(path: &str) {
+    if !Path::new(path).exists() {
+        panic!("Config file does not exist: {path}");
+    }
+}
 
 
 #[cfg(test)]
