@@ -3,4 +3,4 @@
 A project launcher by me, for me
 
 
-![Bridge Four Tattoo](https://coppermind.net/wiki/Bridge_Four#/media/File:Bridge4_Tattoos.svg)
+![Bridge Four Tattoo](https://uploads.coppermind.net/Bridge4_Tattoos.svg)
