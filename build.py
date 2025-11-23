@@ -5,6 +5,7 @@ from shutil import which
 from pathlib import Path
 
 CARGO = which('cargo') or ''
+CHMOD = which('chmod') or ''
 
 bin = Path.home() / 'bin/fourth_bridge'
 
@@ -13,7 +14,7 @@ def main():
 
     _ = bin.write_bytes(Path('./target/release/fourth_bridge').read_bytes())
 
-    bin.chmod(0x744)
+    _ = run([CHMOD, 'u+x', bin])
 
 
 

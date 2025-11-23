@@ -121,24 +121,23 @@ impl ConfigYaml {
             assert!(i < 1000, "Too many variable expansion loops");
             i += 1;
 
-            let Some(var) = re.captures(&path) else {
+            let Some((var_str, [var_name])) = re.captures(&path).map(|caps| caps.extract()) else {
                 break path;
             };
 
 
-            let var_str  = var.get(0).unwrap().as_str();
-            let var_name = var.get(1).unwrap().as_str().to_owned();
-
-            if map.contains(&var_name) {
+            if map.contains(var_name) {
                 panic!("Variable expansion cycle detected: {var_str}");
             }
 
 
             let dir = self.get_dir_expect(&var_name, proj);
 
-            path = path.replace(var_str, &dir);
+            let var_name = var_name.to_owned();
 
-            map.insert(var_name.to_owned());
+            path = path.replace(&var_str, &dir);
+
+            map.insert(var_name);
 
         };
 
